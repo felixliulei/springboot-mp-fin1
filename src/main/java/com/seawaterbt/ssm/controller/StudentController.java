@@ -2,9 +2,11 @@ package com.seawaterbt.ssm.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.seawaterbt.ssm.annotation.DataSource;
 import com.seawaterbt.ssm.entity.Student;
 import com.seawaterbt.ssm.enums.DataSourceEnum;
+import com.seawaterbt.ssm.mapper.StudentMapper;
 import com.seawaterbt.ssm.service.StudentService;
 import com.seawaterbt.ssm.vo.StudentVo;
 import io.swagger.annotations.Api;
@@ -22,6 +24,8 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private StudentMapper studentMapper;
 
     @ApiOperation("添加学生")
     @PostMapping("/add")
@@ -51,5 +55,16 @@ public class StudentController {
     public List<Student> list(){
         Wrapper<Student> wrapper = new EntityWrapper<>();
         return studentService.selectList(wrapper);
+    }
+
+    @ApiOperation(value = "根据类型查询学生")
+    @GetMapping("/queryByStudent")
+    public List<Student> queryByStudent(){
+        return studentService.selectList(new EntityWrapper<Student>().eq("name","王静"));
+    }
+    @ApiOperation(value = "根据类型分页查询")
+    @GetMapping("/queryByStudentPage")
+    public List<Student> queryByStudentPage(){
+        return studentMapper.selectPage(new Page<Student>(1,5),new EntityWrapper<Student>().like("name","王静").eq("classname","四班").between("age","5","20"));
     }
 }
